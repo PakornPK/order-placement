@@ -3,6 +3,7 @@ package service_test
 import (
 	"testing"
 
+	dto "github.com/PakornPK/order-placement/Dto"
 	"github.com/PakornPK/order-placement/service"
 	"github.com/stretchr/testify/assert"
 )
@@ -10,7 +11,7 @@ import (
 func TestPlaceOrder(t *testing.T) {
 	serv := service.NewOrderService()
 	t.Run("case no.1", func(t *testing.T) {
-		inputs := []service.InputOrder{
+		inputs := []dto.InputOrder{
 			{
 				No:                1,
 				PlatformProductId: "FG0A-CLEAR-IPHONE16PROMAX",
@@ -19,7 +20,7 @@ func TestPlaceOrder(t *testing.T) {
 				TotalPrice:        100,
 			},
 		}
-		expects := []service.CleanedOrder{
+		expects := []dto.CleanedOrder{
 			{
 				No:         1,
 				ProductId:  "FG0A-CLEAR-IPHONE16PROMAX",
@@ -51,7 +52,7 @@ func TestPlaceOrder(t *testing.T) {
 		assert.Nil(t, out2)
 	})
 	t.Run("case no.2", func(t *testing.T) {
-		inputs := []service.InputOrder{
+		inputs := []dto.InputOrder{
 			{
 				No:                1,
 				PlatformProductId: "x2-3&FG0A-CLEAR-IPHONE16PROMAX",
@@ -60,7 +61,7 @@ func TestPlaceOrder(t *testing.T) {
 				TotalPrice:        100,
 			},
 		}
-		expects := []service.CleanedOrder{
+		expects := []dto.CleanedOrder{
 			{
 				No:         1,
 				ProductId:  "FG0A-CLEAR-IPHONE16PROMAX",
@@ -92,7 +93,7 @@ func TestPlaceOrder(t *testing.T) {
 		assert.Nil(t, out2)
 	})
 	t.Run("case no.3", func(t *testing.T) {
-		inputs := []service.InputOrder{
+		inputs := []dto.InputOrder{
 			{
 				No:                1,
 				PlatformProductId: "x2-3&FG0A-MATTE-IPHONE16PROMAX*3",
@@ -101,7 +102,7 @@ func TestPlaceOrder(t *testing.T) {
 				TotalPrice:        90,
 			},
 		}
-		expects := []service.CleanedOrder{
+		expects := []dto.CleanedOrder{
 			{
 				No:         1,
 				ProductId:  "FG0A-MATTE-IPHONE16PROMAX",
@@ -133,7 +134,7 @@ func TestPlaceOrder(t *testing.T) {
 		assert.Nil(t, out2)
 	})
 	t.Run("case no.4", func(t *testing.T) {
-		inputs := []service.InputOrder{
+		inputs := []dto.InputOrder{
 			{
 				No:                1,
 				PlatformProductId: "FG0A-CLEAR-OPPOA3/%20xFG0A-CLEAR-OPPOA3-B",
@@ -142,7 +143,7 @@ func TestPlaceOrder(t *testing.T) {
 				TotalPrice:        80,
 			},
 		}
-		expects := []service.CleanedOrder{
+		expects := []dto.CleanedOrder{
 			{
 				No:         1,
 				ProductId:  "FG0A-CLEAR-OPPOA3",
@@ -184,7 +185,7 @@ func TestPlaceOrder(t *testing.T) {
 	})
 
 	t.Run("case no.5", func(t *testing.T) {
-		inputs := []service.InputOrder{
+		inputs := []dto.InputOrder{
 			{
 				No:                1,
 				PlatformProductId: "FG0A-CLEAR-OPPOA3/%20xFG0A-CLEAR-OPPOA3-B/FG0A-MATTE-OPPOA3",
@@ -193,7 +194,7 @@ func TestPlaceOrder(t *testing.T) {
 				TotalPrice:        120,
 			},
 		}
-		expects := []service.CleanedOrder{
+		expects := []dto.CleanedOrder{
 			{
 				No:         1,
 				ProductId:  "FG0A-CLEAR-OPPOA3",
@@ -251,7 +252,7 @@ func TestPlaceOrder(t *testing.T) {
 	})
 
 	t.Run("case no.6", func(t *testing.T) {
-		inputs := []service.InputOrder{
+		inputs := []dto.InputOrder{
 			{
 				No:                1,
 				PlatformProductId: "--FG0A-CLEAR-OPPOA3*2/FG0A-MATTE-OPPOA3",
@@ -260,7 +261,7 @@ func TestPlaceOrder(t *testing.T) {
 				TotalPrice:        120,
 			},
 		}
-		expects := []service.CleanedOrder{
+		expects := []dto.CleanedOrder{
 			{
 				No:         1,
 				ProductId:  "FG0A-CLEAR-OPPOA3",
@@ -309,7 +310,7 @@ func TestPlaceOrder(t *testing.T) {
 	})
 
 	t.Run("case no.7", func(t *testing.T) {
-		inputs := []service.InputOrder{
+		inputs := []dto.InputOrder{
 			{
 				No:                1,
 				PlatformProductId: "--FG0A-CLEAR-OPPOA3*2/FG0A-MATTE-OPPOA3*2",
@@ -325,7 +326,7 @@ func TestPlaceOrder(t *testing.T) {
 				TotalPrice:        50,
 			},
 		}
-		expects := []service.CleanedOrder{
+		expects := []dto.CleanedOrder{
 			{
 				No:         1,
 				ProductId:  "FG0A-CLEAR-OPPOA3",

@@ -14,5 +14,6 @@ func NewOrderHandler() OrderHandler {
 }
 
 func (h orderHandler) PlaceOrderHandler(c *fiber.Ctx) error {
+	
 	return c.Status(fiber.StatusOK).JSON(map[string]string{"status": "OK"})
 }

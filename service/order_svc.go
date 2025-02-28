@@ -3,60 +3,12 @@ package service
 import (
 	"strconv"
 	"strings"
+
+	dto "github.com/PakornPK/order-placement/Dto"
 )
 
-type InputOrder struct {
-	No                int    `json:"no"`
-	PlatformProductId string `json:"platformProductId"`
-	Qty               int    `json:"qty"`
-	UnitPrice         int    `json:"unitPrice"`
-	TotalPrice        int    `json:"totalPrice"`
-	materialId        string
-	modelId           string
-	textureId         string
-	calPrice          int
-}
-
-func (i *InputOrder) extractProduct() {
-	pd := strings.Split(i.PlatformProductId, "-")
-	i.materialId = pd[0] + "-" + pd[1]
-	if len(pd) > 3 {
-		i.modelId = pd[2] + "-" + pd[3]
-	} else {
-		i.modelId = pd[2]
-	}
-	i.calPrice = i.Qty * i.UnitPrice
-	i.textureId = pd[1]
-}
-
-func (i *InputOrder) getMaterialId() string {
-	return i.materialId
-}
-
-func (i *InputOrder) getModelId() string {
-	return i.modelId
-}
-
-func (i *InputOrder) calculate() int {
-	return i.calPrice
-}
-
-func (i *InputOrder) getTextureId() string {
-	return i.textureId
-}
-
-type CleanedOrder struct {
-	No         int    `json:"no"`
-	ProductId  string `json:"productId"`
-	MaterialId string `json:"materialId"`
-	ModelId    string `json:"modelId"`
-	Qty        int    `json:"qty"`
-	UnitPrice  int    `json:"unitPrice"`
-	TotalPrice int    `json:"totalPrice"`
-}
-
 type OrderService interface {
-	PlaceOrder(orders []InputOrder) ([]CleanedOrder, error)
+	PlaceOrder(orders []dto.InputOrder) ([]dto.CleanedOrder, error)
 }
 
 type orderService struct{}
@@ -65,30 +17,30 @@ func NewOrderService() OrderService {
 	return orderService{}
 }
 
-func (s orderService) PlaceOrder(orders []InputOrder) ([]CleanedOrder, error) {
-	var res []CleanedOrder
+func (s orderService) PlaceOrder(orders []dto.InputOrder) ([]dto.CleanedOrder, error) {
+	var res []dto.CleanedOrder
 	currentNo := 1
 	cleaner := make(map[string]int, 0)
 	wiping := make(map[string]int, 0)
 	inputs := prepareInput(orders)
 	for _, order := range inputs {
-		order.extractProduct()
-		res = append(res, CleanedOrder{
+		order.ExtractProduct()
+		res = append(res, dto.CleanedOrder{
 			No:         currentNo,
 			ProductId:  order.PlatformProductId,
-			MaterialId: order.getMaterialId(),
-			ModelId:    order.getModelId(),
+			MaterialId: order.GetMaterialId(),
+			ModelId:    order.GetModelId(),
 			Qty:        order.Qty,
 			UnitPrice:  order.UnitPrice,
-			TotalPrice: order.calculate(),
+			TotalPrice: order.Calculate(),
 		})
 		currentNo += 1
 		wiping["WIPING-CLOTH"] += order.Qty
-		cleaner[order.getTextureId()+"-CLEANNER"] += order.Qty
+		cleaner[order.GetTextureId()+"-CLEANNER"] += order.Qty
 	}
 
 	for k, v := range wiping {
-		res = append(res, CleanedOrder{
+		res = append(res, dto.CleanedOrder{
 			No:         currentNo,
 			ProductId:  k,
 			Qty:        v,
@@ -99,7 +51,7 @@ func (s orderService) PlaceOrder(orders []InputOrder) ([]CleanedOrder, error) {
 	}
 
 	for k, v := range cleaner {
-		res = append(res, CleanedOrder{
+		res = append(res, dto.CleanedOrder{
 			No:         currentNo,
 			ProductId:  k,
 			Qty:        v,
@@ -112,8 +64,8 @@ func (s orderService) PlaceOrder(orders []InputOrder) ([]CleanedOrder, error) {
 	return res, nil
 }
 
-func prepareInput(inputs []InputOrder) []InputOrder {
-	var newInputs []InputOrder
+func prepareInput(inputs []dto.InputOrder) []dto.InputOrder {
+	var newInputs []dto.InputOrder
 	mapItems := make(map[string]int)
 	for _, v := range inputs {
 		cleanProductId(&v)
@@ -178,7 +130,7 @@ func prepareInput(inputs []InputOrder) []InputOrder {
 
 			unitPrice := v.UnitPrice / qty
 			totalPrice := unitPrice * mapItems[before]
-			tmp := InputOrder{
+			tmp := dto.InputOrder{
 				No:                i + 1,
 				PlatformProductId: p,
 				Qty:               mapItems[before],
@@ -194,7 +146,7 @@ func prepareInput(inputs []InputOrder) []InputOrder {
 	return newInputs
 }
 
-func cleanProductId(v *InputOrder) {
+func cleanProductId(v *dto.InputOrder) {
 	for index, c := range v.PlatformProductId {
 		if c >= 65 && c <= 90 {
 			v.PlatformProductId = v.PlatformProductId[index:]
