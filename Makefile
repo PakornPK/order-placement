@@ -1,7 +1,4 @@
-.PHONY: init run
-
-init:
-	docker-compose -f \scripts\docker-compose.yaml up -d
+.PHONY: run test
 
 run:
 	go run main.go
