@@ -22,6 +22,7 @@ func (s orderService) PlaceOrder(orders []dto.InputOrder) ([]dto.CleanedOrder, e
 	currentNo := 1
 	cleaner := make(map[string]int, 0)
 	wiping := make(map[string]int, 0)
+	textureStr := ""
 	inputs := prepareInput(orders)
 	for _, order := range inputs {
 		order.ExtractProduct()
@@ -37,8 +38,9 @@ func (s orderService) PlaceOrder(orders []dto.InputOrder) ([]dto.CleanedOrder, e
 		currentNo += 1
 		wiping["WIPING-CLOTH"] += order.Qty
 		cleaner[order.GetTextureId()+"-CLEANNER"] += order.Qty
+		textureStr += (order.GetTextureId() + "-CLEANNER,")
 	}
-
+	textureStr = textureStr[:len(textureStr)-1]
 	for k, v := range wiping {
 		res = append(res, dto.CleanedOrder{
 			No:         currentNo,
@@ -49,12 +51,20 @@ func (s orderService) PlaceOrder(orders []dto.InputOrder) ([]dto.CleanedOrder, e
 		})
 		currentNo += 1
 	}
+	var merged []string
+	mapTmp := make(map[string]string, 0)
+	for _, v := range strings.Split(textureStr, ",") {
+		if _, ok := mapTmp[v]; !ok {
+			mapTmp[v] = v
+			merged = append(merged, v)
+		}
+	}
 
-	for k, v := range cleaner {
+	for _, v := range merged {
 		res = append(res, dto.CleanedOrder{
 			No:         currentNo,
-			ProductId:  k,
-			Qty:        v,
+			ProductId:  v,
+			Qty:        cleaner[v],
 			UnitPrice:  0,
 			TotalPrice: 0,
 		})
