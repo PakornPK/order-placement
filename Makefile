@@ -7,7 +7,5 @@ run:
 	go run main.go
 
 test:
-	go test ./... -v
-
-test-svc:
+	go clean -testcache
 	go test ./service/. -v
