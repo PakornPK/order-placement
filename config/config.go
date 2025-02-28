@@ -24,7 +24,6 @@ const (
 
 type Config struct {
 	App AppConfig
-	Db  DatabaseConfig
 }
 
 func LoadConfig() *Config {
@@ -40,13 +39,8 @@ func LoadConfig() *Config {
 	if err := v.Unmarshal(&app); err != nil {
 		panic(err)
 	}
-	var db DatabaseConfig
-	if err := v.Unmarshal(&db); err != nil {
-		panic(err)
-	}
 	return &Config{
 		App: app,
-		Db:  db,
 	}
 }
 
@@ -66,12 +60,4 @@ type AppConfig struct {
 
 func (a *AppConfig) IsLocal() bool {
 	return strings.Compare(ENV_LOCAL, a.Env) == 0
-}
-
-type DatabaseConfig struct {
-	Host     string `mapstructure:"DATABASE_HOST"`
-	Port     int    `mapstructure:"DATABASE_PORT"`
-	Name     string `mapstructure:"DATABASE_NAME"`
-	Username string `mapstructure:"DATABASE_USERNAME"`
-	Password string `mapstructure:"DATABASE_PASSWORD"`
 }
